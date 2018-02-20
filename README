@@ -7,10 +7,10 @@ meta-data fields in the output files.
 At a Glance
 ===========
 
-* Mirror directory tree of FLAC files audio files to AAC/OGG/MP3 (re-encoded
-  using NeroAacEnc, oggenc, or LAME).
+* Mirror directory tree of FLAC files audio files to AAC/OGG/MP3/Opus (re-encoded
+  using NeroAacEnc, oggenc, LAME, or opusenc respectivly).
 * Filter source tree using one or more sub-directory paths.
-* By default, will only re-encode missing or out-of-date AAC/OGG/MP3 files.
+* By default, will only re-encode missing or out-of-date AAC/OGG/MP3/Opus files.
 * Optionally deletes orphaned output files.
 * Multi-threaded encoding ensures full CPU utilization.
 * Supports transfer of FLAC meta-data including *title*, *artist*, *album*.
@@ -105,6 +105,12 @@ MP3 Encoder Options:
  -m MP3_Q, --mp3-quality=MP3_Q
                      set the Lame MP3 encoder quality value, must be a
                      initeger range of 0..9 [default:3]
+
+Opus Encoder Options:
+--------------------
+ -p OPUS_Q, --opus-quality=opus_Q
+                     set the Opus encoder quality value, must be an
+                     integer range of 6..256 [default:128]
 
 
 Examples

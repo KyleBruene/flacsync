@@ -5,7 +5,7 @@
 #
 #  See LICENSE text for more details.
 """
-   Recursively mirror a directory tree of FLAC audio files to AAC/OGG/MP3.
+   Recursively mirror a directory tree of FLAC audio files to AAC/OGG/MP3/Opus.
    Source files can be filtered (by sub-directory, or full path) in order to
    limit the files converted. The script will also attempt to retain all
    meta-data fields in the output files.
@@ -13,10 +13,10 @@
    At a Glance
    ===========
 
-   * Mirror directory tree of FLAC files audio files to AAC/OGG/MP3 (re-encoded
-     using NeroAacEnc, oggenc, or LAME).
+   * Mirror directory tree of FLAC files audio files to AAC/OGG/MP3/Opus (re-encoded
+     using NeroAacEnc, oggenc, LAME, or opusenc respectivly).
    * Filter source tree using one or more sub-directory paths.
-   * By default, will only re-encode missing or out-of-date AAC/OGG/MP3 files.
+   * By default, will only re-encode missing or out-of-date AAC/OGG/MP3/Opus files.
    * Optionally deletes orphaned output files.
    * Multi-threaded encoding ensures full CPU utilization.
    * Supports transfer of FLAC meta-data including *title*, *artist*, *album*.
@@ -73,7 +73,7 @@
 
    -t ENC_TYPE, --type=ENC_TYPE
                         select the output transcode format; supported values
-                        are 'aac','ogg','mp3' [default:aac]
+                        are 'aac','ogg','mp3','opus' [default:aac]
 
    -o, --ignore-orphans
                         prevent the removal of files and directories in the
@@ -109,9 +109,14 @@
    MP3 Encoder Options:
    --------------------
     -m MP3_Q, --mp3-quality=MP3_Q
-                        set the Lame MP3 encoder quality value, must be a
+                        set the Lame MP3 encoder quality value, must be an
                         initeger range of 0..9 [default:3]
 
+   Opus Encoder Options:
+   --------------------
+    -p OPUS_Q, --opus-quality=opus_Q
+                        set the Opus encoder quality value, must be an
+                        integer range of 6..256 [default:128]
 
    Examples
    ========
@@ -162,6 +167,7 @@ DEFAULT_ENCODER = 'aac'
 ENCODERS = {'aac':encoder.AacEncoder,
             'ogg':encoder.OggEncoder,
             'mp3':encoder.Mp3Encoder,
+            'opus':encoder.OpusEncoder,
          }
 CORES = mp.cpu_count()
 
@@ -526,6 +532,16 @@ def get_opts( argv ):
          action='callback', callback=store_enc_opt, callback_args=('mp3',),
          type='string', help=_help_str(helpstr) )
    parser.add_option_group( mp3_group )
+
+   # Opus only options
+   opus_group = op.OptionGroup( parser, "OGG Encoder Options" )
+   helpstr = """
+      set the Opus encoder quality value, must be an integer range of 6..256
+      [default:%default]"""
+   opus_group.add_option( '-p', '--opus-quality', dest='ogg_q', default='128',
+         action='callback', callback=store_enc_opt, callback_args=('opus',),
+         type='string', help=_help_str(helpstr) )
+   parser.add_option_group( opus_group )
 
    # examine input args
    (opts, args) = parser.parse_args( argv )

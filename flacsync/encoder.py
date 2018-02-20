@@ -425,3 +425,55 @@ class Mp3Encoder( _Encoder ):
          audio.tags.add(pic)
          err = audio.save()
       return self._check_err( err, "MP3 add-cover failed:" )
+
+class OpusEncoder( _Encoder ):
+   """
+   FLAC to Opus encoder.
+   """
+   def __init__( self, opus_q, **kwargs  ):
+      """
+      :param opus_q:  Opus encoder quality value [6 - 256]
+      :type  opus_q:  str
+      """
+      super( OpusEncoder, self).__init__( ext='.opus', **kwargs)
+      assert type(opus_q) == str, "q value is: %s" % (opus_q,)
+      self.q = opus_q
+
+   def encode( self, force=False ):
+      """
+      Performs audio encoding process.
+
+      :param force:  When :data:`True`, encoding will be done, even if
+                     destination file exists.
+      :type  force:  boolean
+
+      :return: :data:`True` if (re)encoding occurred and no errors,
+               :data:`False` otherwise
+      """
+      if force or util.newer( self.src, self.dst):
+         self._pre_encode()
+         # encode to Opus
+         err = sp.call( 'opusenc --vbr --comp 10 --bitrate %s "%s" "%s"' %
+               (self.q, self.src, self.dst), shell=True, stderr=NULL)
+         if err == -2:  # keyboard interrupt
+            os.remove(self.dst) # clean-up partial file
+            raise KeyboardInterrupt
+         return self._check_err( err, "Opus encoder failed:" )
+      else:
+         return False
+
+   def tag( self, tags):
+      """
+      No-op, since tags are automatically updated during encoding.
+
+      :return: :data:`True`
+      """
+      return True
+
+   def set_cover( self, force=False, resize=False ):
+      """
+      Disabled until further testing
+
+      :return: :data:`True`
+      """
+      return True
