@@ -14,7 +14,7 @@
    ===========
 
    * Mirror directory tree of FLAC files audio files to AAC/OGG/MP3/Opus (re-encoded
-     using NeroAacEnc, oggenc, LAME, or opusenc respectivly).
+     using NeroAacEnc, oggenc, LAME, or opusenc respectively).
    * Filter source tree using one or more sub-directory paths.
    * By default, will only re-encode missing or out-of-date AAC/OGG/MP3/Opus files.
    * Optionally deletes orphaned output files.
